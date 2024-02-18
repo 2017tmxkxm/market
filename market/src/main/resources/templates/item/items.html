@@ -1,0 +1,59 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- header -->
+<th:block th:include="fragment/header"></th:block>
+
+<div class="container">
+    <div class="py-5 text-center">
+        <h2>상품 목록</h2>
+    </div>
+
+    <form class="form-inline">
+        <div class="row justify-content-md-center">
+            <div class="col-auto">
+                <input type="text" class="form-control" placeholder="상품명"/>
+            </div>
+            <div class="col-auto">
+                <input type="text" class="form-control" placeholder="가격"/>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-secondary mb-2">검색</button>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary float-end"
+                        type="button">상품 등록
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <hr class="my-4">
+    <table class="table">
+        <tbody>
+            <ul th:each="item: ${items}">
+                <li style="list-style:none; float:left;">
+                    <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px; margin-top: 10px;">
+                        <img src="/img/image2.PNG" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <h5 class="card-title">[[${item.itemName}]]</h5>
+                            <p class="card-text">가격 : [[${item.price}]]</p>
+                            <a href="" class="btn btn-primary">보러 가기</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </tbody>
+    </table>
+
+    <!--/* 페이지네이션 렌더링 영역 */-->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center" style="display: flex; " id="paging">
+            <li class="page-item"><a class="page-link" href="javascript:void(0);">Frist</a></li>
+            <li class="page-item"><a class="page-link" href="javascript:void(0);">Previous</a></li>
+        </ul>
+    </nav>
+
+</div> <!-- /container -->
+
+</html>
