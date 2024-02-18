@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.free.market.item.mapper.ItemMapper">
+
+    <select id="findAll" resultType="item">
+        /* findAll */
+        SELECT
+            a.id
+            , a.itemName
+            , a.content
+            , a.create_date
+            , a.update_date
+            , a.price
+            , a.quantity
+            , a.open
+            , a.user_id
+            , a.create_user
+        FROM
+            tb_item a
+    </select>
+
+</mapper>
