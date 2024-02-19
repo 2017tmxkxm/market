@@ -19,4 +19,27 @@
             tb_item a
     </select>
 
+    <insert id="save">
+        INSERT INTO tb_item (
+            itemName
+            , content
+            , price
+            , quantity
+            , open
+            , user_id
+            , create_user
+        ) VALUE (
+            #{itemName}
+            , #{content}
+            , #{price}
+            , #{quantity}
+            , #{open}
+            , #{userId}
+            , #{createUser}
+        )
+
+        <selectKey resultType="Long" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
 </mapper>
