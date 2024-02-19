@@ -1,6 +1,7 @@
 package com.free.market.item.service;
 
 import com.free.market.item.domain.Item;
+import com.free.market.item.domain.ItemSaveForm;
 import com.free.market.item.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,5 +21,16 @@ public class ItemService {
      */
     public List<Item> findAll() {
         return itemMapper.findAll();
+    }
+
+    /**
+     * 아이템 저장
+     */
+    public Long save(ItemSaveForm form) {
+        Item item = form.toItem();
+        item.setUserId(1L);
+        item.setCreateUser(1L);
+        itemMapper.save(item);
+        return item.getId();
     }
 }
