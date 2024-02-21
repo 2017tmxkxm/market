@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- header -->
+<th:block th:insert="~{fragment/header}"></th:block>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>상품 상세</h2>
+    </div>
+
+    <div>
+        <label for="itemId">상품 ID</label>
+        <input type="text" id="itemId" name="itemId" class="form-control" th:value="${item.id}" readonly>
+    </div>
+    <div>
+        <label for="itemName">상품명</label>
+        <input type="text" id="itemName" name="itemName" class="form-control" th:value="${item.itemName}" readonly>
+    </div>
+    <div>
+        <label for="price">가격</label>
+        <input type="text" id="price" name="price" class="form-control" th:value="${item.price}" readonly>
+    </div>
+    <div>
+        <label for="quantity" >수량</label>
+        <input type="text" id="quantity" name="quantity" class="form-control" th:value="${item.quantity}" readonly>
+    </div>
+    <div>
+        <label for="content">내용</label>
+        <textarea id="content" class="form-control" placeholder="내용을 입력해주세요" style="height: 200px" th:text="${item.content}" readonly></textarea>
+    </div>
+    <div>
+        <label for="createDate" >등록일</label>
+        <input type="text" id="createDate" name="quantity" class="form-control" th:value="${item.createDate}" readonly>
+    </div>
+    <div th:if="${item.updateDate != null}">
+        <label for="updateDate" >수정일</label>
+        <input type="text" id="updateDate" name="quantity" class="form-control" th:value="${item.updateDate}" readonly>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- radio button -->
+    <div>
+        <div>판매 여부 </div>
+        <div th:each="open : ${openYn}" class="form-check form-check-inline">
+            <input type="radio" th:field="${item.open}" th:value="${open.key}" class="form-check-input" disabled>
+            <label th:for="${#ids.prev('open')}" th:text="${open.value}" class="form-check-label">판매가능</label>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    th:onclick="|location.href='@{/item/{itemId}/edit(itemId=${itemId})}'|"
+                    type="button">상품 수정</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    th:onclick="itemDel([[${itemId}]]);"
+                    type="button">상품 삭제</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    th:onclick="|location.href='@{/item}'|"
+                    type="button">목록으로</button>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+</body>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<script th:inline="javascript">
+    function itemDel(itemId) {
+        const confirmYn = confirm("삭제 하시겠습니까?");
+        if(confirmYn == true) {
+            $.ajax({
+                type: 'GET',
+                url: '/item/' + itemId + '/delete',
+                data: itemId,
+                dataType: 'text',
+                success: function(data){
+                    alert(data);
+                    location.replace('/item');
+                }
+            });
+        }
+    }
+</script>
+
+</html>
