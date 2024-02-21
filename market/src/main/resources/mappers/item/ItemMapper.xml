@@ -42,4 +42,29 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
+
+    <select id="findById" resultType="Item">
+        SELECT
+            a.id
+            , a.itemName
+            , a.content
+            , a.create_date
+            , a.update_date
+            , a.price
+            , a.quantity
+            , a.open
+            , a.create_user
+            , a.update_user
+            , a.user_id
+        FROM
+            tb_item a
+        WHERE 1=1
+            AND a.id = #{id}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM tb_item
+            WHERE 1=1
+        AND id = #{id}
+    </delete>
 </mapper>

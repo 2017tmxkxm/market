@@ -17,14 +17,17 @@ public class ItemService {
     private final ItemMapper itemMapper;
 
     /**
-     * 아이템 목록
+     * 상품 목록
+     * @return List<Item>
      */
     public List<Item> findAll() {
         return itemMapper.findAll();
     }
 
     /**
-     * 아이템 저장
+     * 상품 등록
+     * @param form
+     * @return itemId
      */
     public Long save(ItemSaveForm form) {
         Item item = form.toItem();
@@ -32,5 +35,22 @@ public class ItemService {
         item.setCreateUser(1L);
         itemMapper.save(item);
         return item.getId();
+    }
+
+    /**
+     * 상품 상세
+     * @param id
+     * @return Item
+     */
+    public Item findById(Long id) {
+        return itemMapper.findById(id);
+    }
+
+    /**
+     * 상품 삭제
+     * @param id
+     */
+    public void delete(Long id) {
+        itemMapper.delete(id);
     }
 }

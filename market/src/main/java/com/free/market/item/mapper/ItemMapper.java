@@ -11,4 +11,6 @@ public interface ItemMapper {
 
     public List<Item> findAll();
     public void save(Item item);
+    public Item findById(Long id);
+    public void delete(Long id);
 }

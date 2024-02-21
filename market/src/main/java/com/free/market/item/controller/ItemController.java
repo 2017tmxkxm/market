@@ -9,10 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.LinkedHashMap;
@@ -60,5 +57,25 @@ public class ItemController {
         redirectAttributes.addAttribute("itemId", itemId);
 
         return "redirect:/item/{itemId}";
+    }
+
+    @GetMapping("/{itemId}")
+    public String item(@PathVariable(name = "itemId") Long itemId, Model model) {
+        Item item = itemService.findById(itemId);
+        model.addAttribute("item", item);
+        return "/item/item";
+    }
+
+    @ResponseBody
+    @GetMapping("/{itemId}/delete")
+    public String delete(@PathVariable(name = "itemId") Long itemId) {
+        Item item = itemService.findById(itemId);
+        if(item != null) {
+            itemService.delete(itemId);
+        } else {
+            return "잘못된 요청입니다. 해당 게시물은 없습니다 " + itemId;
+        }
+
+        return "삭제되었습니다.";
     }
 }
