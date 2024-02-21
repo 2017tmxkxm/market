@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <!-- header -->
-<th:block th:include="fragment/header"></th:block>
+<th:block th:insert="~{fragment/header}"></th:block>
 
 <div class="container">
     <div class="py-5 text-center">
@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <h5 class="card-title">[[${item.itemName}]]</h5>
                             <p class="card-text">가격 : [[${item.price}]]</p>
-                            <a href="" class="btn btn-primary">보러 가기</a>
+                            <a th:href="@{/item/{itemId}(itemId=${item.id})}" class="btn btn-primary">보러 가기</a>
                         </div>
                     </div>
                 </li>
