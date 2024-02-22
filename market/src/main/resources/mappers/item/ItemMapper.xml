@@ -67,4 +67,26 @@
             WHERE 1=1
         AND id = #{id}
     </delete>
+
+    <update id="update">
+        UPDATE tb_item SET
+            itemName = #{itemName}
+            , content = #{content}
+            , price = #{price}
+            , quantity = #{quantity}
+            , open = #{open}
+            , update_date = CURRENT_TIMESTAMP
+            , update_user = #{updateUser}
+        WHERE
+            id = #{id}
+
+        <selectKey resultType="Long" keyProperty="id" keyColumn="id" order="AFTER">
+            SELECT
+                a.id
+            FROM
+                tb_item a
+            WHERE 1=1
+                AND a.id = #{id}
+        </selectKey>
+    </update>
 </mapper>
