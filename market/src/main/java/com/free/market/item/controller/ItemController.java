@@ -2,6 +2,7 @@ package com.free.market.item.controller;
 
 import com.free.market.item.domain.Item;
 import com.free.market.item.domain.ItemSaveForm;
+import com.free.market.item.domain.ItemUpdateForm;
 import com.free.market.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,5 +78,27 @@ public class ItemController {
         }
 
         return "삭제되었습니다.";
+    }
+
+    @GetMapping("/{itemId}/edit")
+    public String editForm(@PathVariable(name = "itemId") Long itemId, Model model) {
+        Item item = itemService.findById(itemId);
+        model.addAttribute("item", item);
+        return "item/editForm";
+    }
+
+    @PostMapping("/{itemId}/edit")
+    public String edit(@PathVariable(name = "itemId") Long itemId, @Validated @ModelAttribute("item")ItemUpdateForm form
+                        , BindingResult bindingResult
+                        , RedirectAttributes redirectAttributes) {
+
+        if(bindingResult.hasErrors()) {
+            return "item/editForm";
+        }
+
+        Long updateItemId = itemService.update(form);
+
+        redirectAttributes.addAttribute("itemId", updateItemId);
+        return "redirect:/item/{itemId}";
     }
 }

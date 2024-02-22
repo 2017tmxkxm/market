@@ -2,6 +2,7 @@ package com.free.market.item.service;
 
 import com.free.market.item.domain.Item;
 import com.free.market.item.domain.ItemSaveForm;
+import com.free.market.item.domain.ItemUpdateForm;
 import com.free.market.item.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,5 +53,16 @@ public class ItemService {
      */
     public void delete(Long id) {
         itemMapper.delete(id);
+    }
+
+    /**
+     * 상품 수정
+     * @param form
+     * @return itemId
+     */
+    public Long update(ItemUpdateForm form) {
+        Item updateItem = form.toItem();
+        itemMapper.update(updateItem);
+        return updateItem.getId();
     }
 }

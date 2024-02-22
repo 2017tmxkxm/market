@@ -13,4 +13,6 @@ public interface ItemMapper {
     public void save(Item item);
     public Item findById(Long id);
     public void delete(Long id);
+
+    public void update(Item item);
 }
