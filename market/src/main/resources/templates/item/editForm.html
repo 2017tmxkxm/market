@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- header -->
+<th:block th:insert="~{fragment/header}"></th:block>
+<head>
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>상품 수정</h2>
+    </div>
+
+    <form th:action th:object="${item}" method="post">
+
+        <div>
+            <label for="id">상품 ID</label>
+            <input type="text" id="id" class="form-control" th:field="*{id}" readonly>
+        </div>
+        <div>
+            <label for="itemName">상품명</label>
+            <input type="text" id="itemName" th:field="*{itemName}"
+                   th:errorclass="field-error" class="form-control" placeholder="상품명을 입력하세요">
+            <div class="field-error" th:errors="*{itemName}">상품명 오류</div>
+        </div>
+        <div>
+            <label for="price">가격</label>
+            <input type="text" id="price" th:field="*{price}"
+                   th:errorclass="field-error" class="form-control" placeholder="가격을 입력하세요">
+            <div class="field-error" th:errors="*{price}">가격 오류</div>
+        </div>
+        <div>
+            <label for="quantity">수량</label>
+            <input type="text" id="quantity" th:field="*{quantity}"
+                   th:errorclass="field-error" class="form-control" placeholder="수량을 입력하세요">
+            <div class="field-error" th:errors="*{quantity}">수량 오류</div>
+        </div>
+        <div>
+            <label for="content">내용</label>
+            <textarea id="content" th:field="*{content}" th:errorclass="field-error" class="form-control" placeholder="내용을 입력해주세요" style="height: 200px"></textarea>
+            <div class="field-error" th:errors="*{content}">내용 오류</div>
+        </div>
+        <div>
+            <label for="createDate" >등록일</label>
+            <input type="text" id="createDate" name="quantity" class="form-control" th:field="*{createDate}" readonly>
+        </div>
+
+        <hr class="my-4">
+
+        <!-- radio button -->
+        <div>
+            <div>판매 여부 </div>
+            <div th:each="open : ${openYn}" class="form-check form-check-inline">
+                <input type="radio" th:field="*{open}" th:value="${open.key}" class="form-check-input">
+                <label th:for="${#ids.prev('open')}" th:text="${open.value}" class="form-check-label">판매가능</label>
+            </div>
+            <div class="field-error" th:errors="*{open}"></div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit">저장</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        th:onclick="|location.href='@{/item}'|"
+                        type="button">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+</div> <!-- /container -->
+</body>
+</html>
