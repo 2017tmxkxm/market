@@ -33,4 +33,17 @@ public class Item {
         this.userId = userId;
         this.createUser = createUser;
     }
+
+    // ItemUpdateForm Item으로 변환시 사용 생성자
+    public Item(Long id, String itemName, String content, Integer price, Integer quantity, String open, Long userId, String updateDate, Long updateUser) {
+        this.id = id;
+        this.itemName = itemName;
+        this.content = content;
+        this.price = price;
+        this.quantity = quantity;
+        this.open = open;
+        this.userId = userId;
+        this.updateDate = updateDate;
+        this.updateUser = updateUser;
+    }
 }
