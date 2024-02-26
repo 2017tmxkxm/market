@@ -1,5 +1,8 @@
 package com.free.market.item.controller;
 
+import com.free.market.common.file.FileUtils;
+import com.free.market.file.domain.FileRequest;
+import com.free.market.file.service.FileService;
 import com.free.market.item.domain.Item;
 import com.free.market.item.domain.ItemSaveForm;
 import com.free.market.item.domain.ItemUpdateForm;
@@ -13,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +28,8 @@ import java.util.Map;
 public class ItemController {
 
     private final ItemService itemService;
+    private final FileService fileService;
+    private final FileUtils fileUtils;
 
     @ModelAttribute("openYn")
     public Map<String, String> openYn() {
@@ -47,13 +53,16 @@ public class ItemController {
     }
 
     @PostMapping("/add")
-    public String addItem(@Validated @ModelAttribute("item") ItemSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String addItem(@Validated @ModelAttribute("item") ItemSaveForm form, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
 
         if(bindingResult.hasErrors()) {
             return "item/addForm";
         }
 
         Long itemId = itemService.save(form);
+
+        List<FileRequest> files = fileUtils.uploadFiles(form.getFiles());
+        fileService.saveFile(itemId, files);
 
         redirectAttributes.addAttribute("itemId", itemId);
 
