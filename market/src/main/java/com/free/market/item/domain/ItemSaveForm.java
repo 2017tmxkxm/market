@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,6 +36,8 @@ public class ItemSaveForm {
     private Long createUser;
 
     private Long updateUser;
+
+    private List<MultipartFile> files;
 
     public Item toItem() {
         return new Item(itemName, content, price, quantity, open, userId, createUser);
