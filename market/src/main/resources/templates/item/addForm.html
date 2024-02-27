@@ -21,7 +21,7 @@
         <h2>상품 등록</h2>
     </div>
 
-    <form th:action th:object="${item}" method="post">
+    <form th:action th:object="${item}" method="post" enctype="multipart/form-data">
 
         <div>
             <label for="itemName">상품명</label>
@@ -40,6 +40,16 @@
             <input type="text" id="quantity" th:field="*{quantity}"
                    th:errorclass="field-error" class="form-control" placeholder="수량을 입력하세요">
             <div class="field-error" th:errors="*{quantity}">수량 오류</div>
+        </div>
+        <div class="file_list">
+            <div>
+                <div class="file_input">
+                    <label for="formFile" class="form-label">첨부파일</label>
+                        <input type="file" class="form-control" id="formFile" name="files" onchange="selectFile(this);" />
+                </div>
+                <button type="button" onclick="removeFile(this);" class="btn btn-secondary btn-sm">삭제</button>
+                <button type="button" onclick="addFile();" class="btn btn-secondary btn-sm">파일 추가</button>
+            </div>
         </div>
         <div>
             <label for="content">내용</label>
@@ -76,4 +86,49 @@
 
 </div> <!-- /container -->
 </body>
+
+<script>
+    // 파일 선택
+    function selectFile(element) {
+
+        const file = element.files[0];
+
+        // 2. 파일 크기가 10MB를 초과하는 경우
+        const fileSize = Math.floor(file.size / 1024 / 1024);
+        if (fileSize > 10) {
+            alert('10MB 이하의 파일로 업로드해 주세요.');
+            element.value = '';
+            return false;
+        }
+    }
+
+
+    // 파일 추가
+    function addFile() {
+        const fileDiv = document.createElement('div');
+        fileDiv.innerHTML =`
+            <div class="file_input">
+                <input type="file" class="form-control" name="files" onchange="selectFile(this);" />
+            </div>
+            <button type="button" onclick="removeFile(this);" class="btn btn-secondary btn-sm">삭제</button>
+        `;
+        document.querySelector('.file_list').appendChild(fileDiv);
+    }
+
+
+    // 파일 삭제
+    function removeFile(element) {
+        const fileAddBtn = element.nextElementSibling;
+        if (fileAddBtn) {
+            const inputs = element.previousElementSibling.querySelectorAll('input');
+            console.log('element.previousElementSibling : ' + element.previousElementSibling)
+            console.log('element.nextElementSibling " ' + element.nextElementSibling)
+            console.log(element.previousElementSibling.querySelectorAll('input'))   //NodeList[input#formFile.form-control]
+            //inputs.value = ''
+            inputs.forEach(input => input.value = '')
+            return false;
+        }
+        element.parentElement.remove();
+    }
+</script>
 </html>
