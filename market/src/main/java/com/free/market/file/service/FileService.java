@@ -1,6 +1,7 @@
 package com.free.market.file.service;
 
 import com.free.market.file.domain.FileRequest;
+import com.free.market.file.domain.FileResponse;
 import com.free.market.file.mapper.FileMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -28,5 +30,25 @@ public class FileService {
         }
 
         fileMapper.saveAll(files);
+    }
+
+    public List<FileResponse> findAllFileByItemId(Long itemId) {
+        return fileMapper.findAllByItemId(itemId);
+    }
+
+    public List<FileResponse> findAllFileByIds(List<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+
+        return fileMapper.findAllByIds(ids);
+    }
+
+    public void deleteAllFileByIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+
+        fileMapper.deleteAllByIds(ids);
     }
 }
