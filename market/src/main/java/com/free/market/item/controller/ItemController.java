@@ -2,6 +2,7 @@ package com.free.market.item.controller;
 
 import com.free.market.common.file.FileUtils;
 import com.free.market.file.domain.FileRequest;
+import com.free.market.file.domain.FileResponse;
 import com.free.market.file.service.FileService;
 import com.free.market.item.domain.Item;
 import com.free.market.item.domain.ItemSaveForm;
@@ -97,15 +98,30 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/edit")
-    public String edit(@PathVariable(name = "itemId") Long itemId, @Validated @ModelAttribute("item")ItemUpdateForm form
+    public String edit(@PathVariable(name = "itemId") Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form
                         , BindingResult bindingResult
-                        , RedirectAttributes redirectAttributes) {
+                        , RedirectAttributes redirectAttributes) throws IOException {
 
         if(bindingResult.hasErrors()) {
             return "item/editForm";
         }
 
         Long updateItemId = itemService.update(form);
+
+        // 파일 업로드 (to disk)
+        List<FileRequest> uploadFiles = fileUtils.uploadFiles(form.getFiles());
+
+        // 파일 정보 저장 (to database)
+        fileService.saveFile(form.getId(), uploadFiles);
+
+        // 삭제할 파일 정보 조회 (from database)
+        List<FileResponse> deleteFiles = fileService.findAllFileByIds(form.getRemoveFileIds());
+
+        // 파일 삭제 (from disk)
+        fileUtils.deleteFiles(deleteFiles);
+
+        // 파일 삭제 (from database)
+        fileService.deleteAllFileByIds(form.getRemoveFileIds());
 
         redirectAttributes.addAttribute("itemId", updateItemId);
         return "redirect:/item/{itemId}";
