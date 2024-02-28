@@ -14,14 +14,24 @@
         , deleted_date
     </sql>
 
+    <!-- tb_file 테이블 전체 컬럼 -->
+    <sql id="fileColumnsWithOutId">
+        item_id
+        , original_name
+        , save_name
+        , size
+        , delete_yn
+        , created_date
+        , deleted_date
+    </sql>
+
     <insert id="saveAll">
         INSERT INTO tb_file (
-            <include refid="fileColumns" />
+            <include refid="fileColumnsWithOutId" />
         ) VALUE
         <foreach item="file" collection="list" separator=",">
             (
-                #{file.id}
-                , #{file.itemId}
+                #{file.itemId}
                 , #{file.originalName}
                 , #{file.saveName}
                 , #{file.size}
