@@ -5,10 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class ItemUpdateForm {
 
     @NotNull
@@ -40,6 +45,10 @@ public class ItemUpdateForm {
     private String createDate;
 
     private String updateDate;
+
+    private List<MultipartFile> files;
+
+    private List<Long> removeFileIds;  // 삭제할 첨부파일 id List
 
     public Item toItem() {
         return new Item(id, itemName, content, price, quantity, open, userId, updateDate, updateUser);
