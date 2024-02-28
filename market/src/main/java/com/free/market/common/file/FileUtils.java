@@ -1,14 +1,17 @@
 package com.free.market.common.file;
 
 import com.free.market.file.domain.FileRequest;
+import com.free.market.file.domain.FileResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -112,4 +115,39 @@ public class FileUtils {
         return dir.getPath();
     }
 
+    /**
+     * 파일 삭제 (from Disk)
+     * @param files - 삭제할 파일 정보 List
+     */
+    public void deleteFiles(List<FileResponse> files) {
+        if(CollectionUtils.isEmpty(files)) {
+            return;
+        }
+
+        for (FileResponse file : files) {
+            String uploadDate = file.getCreatedDate().toLocalDate().format(DateTimeFormatter.ofPattern("yyMMdd"));
+            deleteFile(uploadDate, file.getSaveName());
+        }
+    }
+
+    /**
+     * 파일 삭제 (from Disk)
+     * @param addPath - 추가 경로
+     * @param filename - 파일명
+     */
+    private void deleteFile(String addPath, String filename) {
+        String filePath = Paths.get(fileDir, addPath, filename).toString();
+        deleteFile(filePath);
+    }
+
+    /**
+     * 파일 삭제 (from Disk)
+     * @param filePath - 파일 경로
+     */
+    private void deleteFile(String filePath) {
+        File file = new File(filePath);
+        if(file.exists()) {
+            file.delete();
+        }
+    }
 }
