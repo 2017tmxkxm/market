@@ -121,7 +121,9 @@
                 let fileHtml = '<label for="files" class="form-label">첨부파일</label><div class="file_down"><div class="cont">';
 
                 $.each(data, function(i, item) {
-                    fileHtml += `<p><a href="javascript:alert('준비중입니다.');">` + item.originalName + `</a></p>`;
+                    fileHtml += `<p><a href="/item/[[${item.id}]]/files/` + item.id + `/download">` + item.originalName + `</a></p>
+                                  <img src="/item/[[${item.id}]]/files/` + item.id + `/download" width="300" height="300"/>
+                    `;
                 })
 
                 fileHtml += '</div></div>';
