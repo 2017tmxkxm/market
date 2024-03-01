@@ -22,6 +22,7 @@ public class Item {
     private Long createUser;
     private String updateDate;
     private Long updateUser;
+    private Long fileId;
 
     // ItemSaveForm Item으로 변환시 사용 생성자
     public Item(String itemName, String content, Integer price, Integer quantity, String open, Long userId, Long createUser) {
