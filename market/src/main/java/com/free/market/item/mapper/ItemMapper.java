@@ -1,6 +1,7 @@
 package com.free.market.item.mapper;
 
 
+import com.free.market.common.dto.SearchDto;
 import com.free.market.item.domain.Item;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,6 +14,9 @@ public interface ItemMapper {
     public void save(Item item);
     public Item findById(Long id);
     public void delete(Long id);
-
     public void update(Item item);
+
+    List<Item> findAll(SearchDto params);
+
+    int count(SearchDto params);
 }
