@@ -122,7 +122,7 @@
 
                 $.each(data, function(i, item) {
                     fileHtml += `<p><a href="/item/[[${item.id}]]/files/` + item.id + `/download">` + item.originalName + `</a></p>
-                                  <img src="/item/[[${item.id}]]/files/` + item.id + `/download" width="300" height="300"/>
+                                  <img src="/item/[[${item.id}]]/files/` + item.id + `/download" class="img-fluid rounded"/>
                     `;
                 })
 
