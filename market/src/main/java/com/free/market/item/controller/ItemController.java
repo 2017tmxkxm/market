@@ -1,6 +1,8 @@
 package com.free.market.item.controller;
 
+import com.free.market.common.dto.SearchDto;
 import com.free.market.common.file.FileUtils;
+import com.free.market.common.paging.PagingResponse;
 import com.free.market.file.domain.FileRequest;
 import com.free.market.file.domain.FileResponse;
 import com.free.market.file.service.FileService;
@@ -41,9 +43,9 @@ public class ItemController {
     }
 
     @GetMapping
-    public String items(Model model) {
-        List<Item> items = itemService.findAll();
-        model.addAttribute("items", items);
+    public String items(@ModelAttribute(name = "params") SearchDto params, Model model) {
+        PagingResponse<Item> response = itemService.findAll(params);
+        model.addAttribute("response", response);
         return "item/items";
     }
 
