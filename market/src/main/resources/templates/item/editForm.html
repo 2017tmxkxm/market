@@ -80,7 +80,7 @@
             </div>
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
-                        th:onclick="|location.href='@{/item}'|"
+                        th:onclick="goListPage();"
                         type="button">취소</button>
             </div>
         </div>
@@ -101,7 +101,17 @@
         // API 호출
         $.getJSON(`/item/[[${item.id}]]/files`, function(data){
             if (data.length == 0 ) {
-                return false;
+                const fileDiv = document.createElement('div');
+
+                fileDiv.innerHTML = `
+                    <div class="file_input">
+                        <label for="formFile" class="form-label">첨부파일</label>
+                            <input type="file" class="form-control" id="formFile" name="files" onchange="selectFile(this);" />
+                    </div>
+                    <button type="button" onclick="removeFile(this);" class="btn btn-secondary btn-sm">삭제</button>
+                    <button type="button" onclick="addFile();" class="btn btn-secondary btn-sm">파일 추가</button>
+                `;
+                document.querySelector('.file_list').appendChild(fileDiv);
             } else {
                 // 2. HTML 추가
                 $.each(data, function(i, item) {
@@ -178,5 +188,10 @@
         }
     }());
 
+    // 취소 버튼시 클릭시 리스트 페이지로 이동
+    function goListPage() {
+        const queryString = new URLSearchParams(location.search);
+        location.href = '/item' + '?'+ queryString.toString();
+    }
 </script>
 </html>
