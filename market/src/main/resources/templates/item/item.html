@@ -68,7 +68,7 @@
     <div class="row">
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
-                    th:onclick="|location.href='@{/item/{itemId}/edit(itemId=${itemId})}'|"
+                    th:onclick="goUpdatePage([[${itemId}]])"
                     type="button">상품 수정</button>
         </div>
         <div class="col">
@@ -78,7 +78,7 @@
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
-                    th:onclick="|location.href='@{/item}'|"
+                    onclick="goListPage();"
                     type="button">목록으로</button>
         </div>
     </div>
@@ -89,17 +89,27 @@
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 <script th:inline="javascript">
+    let fileId = [];
+    console.log(fileId)
+
     function itemDel(itemId) {
         const confirmYn = confirm("삭제 하시겠습니까?");
+        const searchParams = new URLSearchParams(location.search);
+
         if(confirmYn == true) {
             $.ajax({
                 type: 'GET',
                 url: '/item/' + itemId + '/delete',
-                data: itemId,
-                dataType: 'text',
+                data: {
+                    'itemId' : itemId,
+                    'itemName' : searchParams.get('itemName'),
+                    'price' : searchParams.get('price'),
+                    'fileId' : fileId,
+                },
+                dataType: 'json',
                 success: function(data){
-                    alert(data);
-                    location.replace('/item');
+                    alert(data.message);
+                    location.replace('/item?' + searchParams);
                 }
             });
         }
@@ -121,9 +131,10 @@
                 let fileHtml = '<label for="files" class="form-label">첨부파일</label><div class="file_down"><div class="cont">';
 
                 $.each(data, function(i, item) {
-                    fileHtml += `<p><a href="/item/[[${item.id}]]/files/` + item.id + `/download">` + item.originalName + `</a></p>
+                    fileHtml += `
                                   <img src="/item/[[${item.id}]]/files/` + item.id + `/download" class="img-fluid rounded"/>
                     `;
+                    fileId.push(item.id)
                 })
 
                 fileHtml += '</div></div>';
@@ -131,6 +142,22 @@
                 document.getElementById('files').innerHTML = fileHtml;
             }
         });
+
+    }
+
+    // 게시글 수정 페이지로 이동
+    function goUpdatePage(id) {
+        location.href = '/item/' + id + '/edit' + location.search;
+    }
+
+    // 목록으로 버튼시 클릭시 리스트 페이지로 이동
+    function goListPage() {
+        const queryString = new URLSearchParams(location.search);
+        // page=1&recordSize=8&pageSize=10&itemName=3&price=2000
+        //console.log('item.html queryString : ' + queryString);
+        // ?page=1&recordSize=8&pageSize=10&itemName=3&price=2000
+        //console.log('item.html location.search : ' + location.search);
+        location.href = '/item' + '?'+ queryString.toString();
     }
 </script>
 
