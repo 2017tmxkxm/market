@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -16,6 +18,7 @@ public class SearchDto {
     private String itemName;        // 검색 키워드
     private String price;           // 검색 키워드
     private Pagination pagination;  // 페이지 네이션 정보
+    private List<Long> fileId;      // 삭제할 fileId List
 
     public SearchDto() {
         this.page = 1;
