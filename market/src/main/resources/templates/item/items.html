@@ -9,16 +9,16 @@
         <h2>상품 목록</h2>
     </div>
 
-    <form class="form-inline">
+    <form class="form-inline" id="searchForm" onsubmit="return false;">
         <div class="row justify-content-md-center">
             <div class="col-auto">
-                <input type="text" class="form-control" placeholder="상품명"/>
+                <input type="text" class="form-control" id="itemName" placeholder="상품명"/>
             </div>
             <div class="col-auto">
-                <input type="text" class="form-control" placeholder="가격"/>
+                <input type="text" class="form-control" id="price" placeholder="가격"/>
             </div>
             <div class="col-auto">
-                <button type="button" class="btn btn-secondary mb-2">검색</button>
+                <button type="button" class="btn btn-secondary mb-2" onclick="movePage(1);">검색</button>
             </div>
             <div class="col-auto">
                 <button class="btn btn-primary float-end"
@@ -50,7 +50,29 @@
 
             // 페이지가 로드되었을 때, 딱 한 번만 함수를 실행
             window.onload = () => {
+                setQueryStringParams();
+
                 findAllPost();
+            }
+
+            // 쿼리 스트링 파라미터 셋팅
+            function setQueryStringParams() {
+                // ?page=1&recordSize=8&pageSize=10&itemName=3&price=2000
+                console.log(' location.search : ' + location.search)
+
+                if(! location.search) {
+                    return false;
+                }
+
+                const form = document.getElementById('searchForm');
+
+                new URLSearchParams(location.search).forEach((value, key) => {
+                    if(form[key]) {
+                        form[key].value = value;
+                        console.log(`${key} : ${value}`);
+                        // itemName : 3 price : 2000
+                    }
+                })
             }
 
             // 게시글 리스트 조회
@@ -88,8 +110,7 @@
                 let html = '';
 
                 /*
-                 * 2. 기존에 타임리프(Thymeleaf)를 이용해서 리스트 데이터를 그리던 것과 유사한 로직
-                 *    기존에는 게시글 번호를 (전체 데이터 수 - loop의 인덱스 번호)로 처리했으나, 현재는 (전체 데이터 수 - ((현재 페이지 번호 - 1) * 페이지당 출력할 데이터 개수))로 정밀히 계산
+                 * 2. (전체 데이터 수 - ((현재 페이지 번호 - 1) * 페이지당 출력할 데이터 개수))로 계산
                  */
                 list.forEach(row => {
                     html += `
@@ -165,7 +186,6 @@
             // 페이지 이동
             function movePage(page) {
 
-                // new
                 const form = document.getElementById('searchForm');
 
                 // 1. drawPage( )의 각 버튼에 선언된 onclick 이벤트를 통해 전달받는 page(페이지 번호)를 기준으로 객체 생성
@@ -173,10 +193,12 @@
                     page: (page) ? page : 1,
                     recordSize: 8,
                     pageSize: 10,
+                    itemName: form.itemName.value,
+                    price: form.price.value
                 }
 
                 /*
-                 * 2. location.pathname : 리스트 페이지의 URI("/post/list.do")를 의미
+                 * 2. location.pathname : 리스트 페이지의 URI("/item")를 의미
                  *    new URLSearchParams(queryParams).toString() : queryParams의 모든 프로퍼티(key-value)를 쿼리 스트링으로 변환
                  *    URI + 쿼리 스트링에 해당하는 주소로 이동
                  *    (해당 함수가 리턴해주는 값을 브라우저 콘솔(console)에 찍어보시면 쉽게 이해하실 수 있습니다.)
