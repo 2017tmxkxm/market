@@ -18,6 +18,9 @@
             , b.id AS file_id
         FROM
             tb_item a
+        LEFT JOIN
+            tb_file b
+            ON a.id = b.item_id
         <where>
             <if test="itemName != null and itemName != ''">
                 and itemName like concat('%', #{itemName}, '%')
@@ -26,9 +29,6 @@
                 and price &lt;= #{price}
             </if>
         </where>
-        LEFT JOIN
-            tb_file b
-            ON a.id = b.item_id
         GROUP BY
             a.id
         ORDER BY
