@@ -21,7 +21,7 @@
         <h2>상품 수정</h2>
     </div>
 
-    <form th:action th:object="${item}" method="post" enctype="multipart/form-data">
+    <form th:action="@{/item/${item.id}/edit}" th:object="${item}" method="post" enctype="multipart/form-data">
         <!--/* 삭제 처리할 파일 번호 */-->
         <input type="hidden" id="removeFileIds" name="removeFileIds" />
 
