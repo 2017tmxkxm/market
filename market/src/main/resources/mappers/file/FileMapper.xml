@@ -14,7 +14,7 @@
         , deleted_date
     </sql>
 
-    <!-- tb_file 테이블 전체 컬럼 -->
+    <!-- tb_file id 제외한 테이블 전체 컬럼 -->
     <sql id="fileColumnsWithOutId">
         item_id
         , original_name
