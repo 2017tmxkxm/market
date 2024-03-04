@@ -116,9 +116,9 @@ public class ItemController {
         return "item/editForm";
     }
 
-    @PostMapping(value = "/{itemId}/edit")
+    @PostMapping("/{itemId}/edit")
     @Transactional
-    public String edit(@PathVariable(name = "itemId") Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form
+    public String edit(@PathVariable(name = "itemId") String itemId, @Validated @ModelAttribute("item") ItemUpdateForm form
                         , HttpServletRequest request
                         , BindingResult bindingResult
                         , RedirectAttributes redirectAttributes) throws IOException {
@@ -132,7 +132,6 @@ public class ItemController {
         }
 
         log.info("form={}", form.toString());
-        log.info("files={}", form.getFiles());
         Long updateItemId = itemService.update(form);
 
         // 파일 업로드 (to disk)
@@ -149,11 +148,6 @@ public class ItemController {
 
         // 파일 삭제 (from database)
         fileService.deleteAllFileByIds(form.getRemoveFileIds());
-
-        //http://localhost:8080/item/21?page=1&recordSize=8&pageSize=10&itemName=%ED%8E%98%EC%9D%B4%EC%A7%95&price=
-        log.info("return value={}", updateItemId + "?" + params);
-        // 20?page=1&recordSize=8&pageSize=10&itemName=29&price=
-        //return updateItemId + "?" + params;
 
         return "redirect:/item/" + updateItemId + "?" + params;
     }
