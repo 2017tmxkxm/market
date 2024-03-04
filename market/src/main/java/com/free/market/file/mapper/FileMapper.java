@@ -8,6 +8,11 @@ import java.util.List;
 
 @Mapper
 public interface FileMapper {
+
+    /**
+     * 파일 정보 저장
+     * @param files - file List
+     */
     void saveAll(List<FileRequest> files);
     List<FileResponse> findAllByItemId(Long itemId);
     List<FileResponse> findAllByIds(List<Long> ids);
