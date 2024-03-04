@@ -113,18 +113,34 @@
                  * 2. (전체 데이터 수 - ((현재 페이지 번호 - 1) * 페이지당 출력할 데이터 개수))로 계산
                  */
                 list.forEach(row => {
-                    html += `
-                        <li style="list-style:none; float:left;">
-                            <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px; margin-top: 10px;">
-                                <img src="/item/${row.id}/files/${row.fileId}/download" class="card-img-top" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title">${row.itemName}</h5>
-                                    <p class="card-text">가격 : ${row.price}</p>
-                                    <a onclick="goViewPage(${row.id})" class="btn btn-primary">보러 가기</a>
+                    if( row.fileId ) {
+                        html += `
+                            <li style="list-style:none; float:left;">
+                                <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px; margin-top: 10px;">
+                                    <img src="/item/${row.id}/files/${row.fileId}/download" class="card-img-top" width="300" height="200">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${row.itemName}</h5>
+                                        <p class="card-text">가격 : ${row.price}</p>
+                                        <a onclick="goViewPage(${row.id})" class="btn btn-primary">보러 가기</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </li>
-                    `;
+                            </li>
+                        `;
+                    } else {
+                        html += `
+                            <li style="list-style:none; float:left;">
+                                <div class="card" style="width: 18rem; margin-right: 10px; margin-bottom: 10px; margin-top: 10px;">
+                                    <div class="card-body">
+                                        <img src="/img/marguerite.jpg" class="card-img-top" width="300" height="200">
+                                        <h5 class="card-title">${row.itemName}</h5>
+                                        <p class="card-text">가격 : ${row.price}</p>
+                                        <a onclick="goViewPage(${row.id})" class="btn btn-primary">보러 가기</a>
+                                    </div>
+                                </div>
+                            </li>
+                        `;
+                    }
+
                 })
 
                 // 3. id가 "list"인 요소를 찾아 HTML을 렌더링
