@@ -90,10 +90,8 @@
 <script>
     // 파일 선택
     function selectFile(element) {
-
         const file = element.files[0];
 
-        // 2. 파일 크기가 10MB를 초과하는 경우
         const fileSize = Math.floor(file.size / 1024 / 1024);
         if (fileSize > 10) {
             alert('10MB 이하의 파일로 업로드해 주세요.');
@@ -121,10 +119,6 @@
         const fileAddBtn = element.nextElementSibling;
         if (fileAddBtn) {
             const inputs = element.previousElementSibling.querySelectorAll('input');
-            console.log('element.previousElementSibling : ' + element.previousElementSibling)
-            console.log('element.nextElementSibling " ' + element.nextElementSibling)
-            console.log(element.previousElementSibling.querySelectorAll('input'))   //NodeList[input#formFile.form-control]
-            //inputs.value = ''
             inputs.forEach(input => input.value = '')
             return false;
         }
