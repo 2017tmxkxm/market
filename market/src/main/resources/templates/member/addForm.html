@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+</head>
+
+<section class="d-flex vh-100">
+    <div class="container-fluid row justify-content-center align-content-center">
+        <div class="card bg-dark" style="border-radius: 1rem;">
+            <div class="card-body p-5 ml-5 mr-5">
+                <h2 class="text-white">JOIN</h2>
+                <p class="text-white-50 mt-2 mb-5">서비스를 사용하려면 가입을 진행해주세요!</p>
+
+                <div class = "mb-2">
+                    <form id="signupForm" onsubmit="return false;" autocomplete="off">
+                        <table>
+                            <tr>
+                                <th class="text-white">아이디</th>
+                                <td>
+                                    <input type="text" id="loginId" name="loginId" placeholder="아이디" />
+                                    <button class="w-40 btn btn-secondary btn-md"
+                                            onclick="checkLoginId();"
+                                            id="idCheckBtn"
+                                            type="button">중복확인</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-white">비밀번호</th>
+                                <td>
+                                    <input type="password" name="password" id="password" placeholder="비밀번호" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-white">비밀번호 재입력</th>
+                                <td>
+                                    <input type="password" name="passwordCheck" id="passwordCheck" placeholder="비밀번호 재입력" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-white">닉네임</th>
+                                <td>
+                                    <input type="text" name="nickname" id="nickname" placeholder="닉네임" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="text-white">성별</th>
+                                <td>
+                                        <input type="radio" id="male" name="gender" value="M" checked />
+                                        <label for="male" class="text-white">남</label>
+                                        <input type="radio" id="female" name="gender" value="F" />
+                                        <label for="female" class="text-white">여</label>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+
+                    <hr class="my-4">
+                    <div class="row">
+                        <div class="col">
+                            <button type="button" class="w-100 btn btn-primary btn-lg" onclick="saveMember();">가입</button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="w-100 btn btn-secondary btn-lg" th:onclick="|location.href='@{/item}'|">취소</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script th:src="@{/js/function.js}"></script>
+<script th:inline="javascript">
+    // 아이디 중복 체크
+    function checkLoginId() {
+        const loginId = document.querySelector('#signupForm input[name="loginId"]');
+        hasLastConsonantLetter('아이디');
+        isValid(loginId, '아이디');
+        const count = getJson(`/member/count`, { loginId : loginId.value });
+
+        if (count > 0) {
+            alert('이미 가입된 아이디가 있습니다.');
+            loginId.focus();
+            return false;
+        }
+
+        if (confirm('사용 가능한 아이디입니다.\n입력하신 아이디로 결정하시겠어요?')) {
+            loginId.readOnly = true;
+            document.getElementById('idCheckBtn').disabled = true;
+        }
+    }
+
+
+    // 회원 정보 유효성 검사
+    function validationMemberInfo(form) {
+
+        const fields = form.querySelectorAll('input:not([type="radio"])');
+        const fieldNames = ['아이디', '비밀번호', '비밀번호 재입력', '닉네임'];
+
+        for (let i = 0, len = fields.length; i < len; i++) {
+            isValid(fields[i], fieldNames[i]);
+        }
+
+        if (form.loginId.readOnly === false) {
+            alert('아이디 중복 체크를 완료해 주세요.');
+            throw new Error();
+        }
+
+        if (form.password.value !== form.passwordCheck.value) {
+            alert('비밀번호가 일치하지 않습니다.');
+            form.passwordCheck.focus();
+            throw new Error();
+        }
+    }
+
+
+    // 회원 정보 저장 (회원가입)
+    function saveMember() {
+
+        // 1. 필드 유효성 검사
+        const form = document.getElementById('signupForm');
+        validationMemberInfo(form);
+
+        // 2. 파라미터 세팅
+        const params = {}
+        new FormData(form).forEach((value, key) => params[key] = value.trim());
+
+        // 3. Save API 호출
+        callApi('/member', 'post', params);
+        alert('가입을 축하드립니다!\n로그인 후 서비스를 이용해 주세요.');
+        location.replace('/item');
+    }
+
+</script>
+
+</html>
