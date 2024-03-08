@@ -18,7 +18,7 @@ public class MemberController {
 
     // 로그인 페이지
     @GetMapping("/login")
-    public String openLogin() {
+    public String loginForm() {
         return "member/login";
     }
 
