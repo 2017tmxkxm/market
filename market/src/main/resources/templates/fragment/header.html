@@ -12,11 +12,13 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page">안녕하세요</a>
+                        <a class="nav-link active" aria-current="page" th:if="${memberInfo == null}">안녕하세요</a>
+                        <a class="nav-link active" aria-current="page" th:if="${memberInfo != null}">[[${memberInfo}]]님, 안녕하세요.</a>
                     </li>
                 </ul>
                 <span class="navbar-text">
-                <a class="nav-link active" aria-current="page" href="/login">로그인</a>
+                <a class="nav-link active" aria-current="page" th:if="${memberInfo == null}" href="/member/login">로그인</a>
+                <a class="nav-link active" aria-current="page" th:if="${memberInfo != null}" href="/logout">로그아웃</a>
             </span>
             </div>
         </div>
