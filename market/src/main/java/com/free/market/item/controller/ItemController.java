@@ -1,5 +1,6 @@
 package com.free.market.item.controller;
 
+import com.free.market.auth.PrincipalDetails;
 import com.free.market.common.dto.SearchDto;
 import com.free.market.common.file.FileUtils;
 import com.free.market.common.paging.PagingResponse;
@@ -10,9 +11,13 @@ import com.free.market.item.domain.Item;
 import com.free.market.item.domain.ItemSaveForm;
 import com.free.market.item.domain.ItemUpdateForm;
 import com.free.market.item.service.ItemService;
+import com.free.market.member.domain.MemberResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,10 +52,31 @@ public class ItemController {
     }
 
     @GetMapping
-    public String items(@ModelAttribute(name = "params") SearchDto params, Model model) {
+    public String items(@ModelAttribute(name = "params") SearchDto params, Model model
+                        // SpEL
+                        , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         PagingResponse<Item> response = itemService.findAll(params);
-        log.info("params={}", params);
         model.addAttribute("response", response);
+
+        /*System.out.println("ItemController.items");
+        log.info("memberResponse={}", memberResponse);
+        if(memberResponse != null) {
+            model.addAttribute("userInfo", memberResponse.getLoginId());
+        }*/
+
+        // MemberResponse memberResponse= (MemberResponse) authentication.getPrincipal(); -> X
+        // SecurityContextHolder에서 직접 가져오는 방법
+        // authentication에서 가져온 principal은 principalDetals다.
+        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //PrincipalDetails principalDetails= (PrincipalDetails) authentication.getPrincipal();
+        //log.info("memberResponse={}", principalDetails.getUsername());
+
+        if(principalDetails != null) {
+            log.info("PrincipalDetails={}", principalDetails.getUsername());
+            model.addAttribute("memberInfo", principalDetails.getUsername());
+        }
+
+
         return "item/items";
     }
 
