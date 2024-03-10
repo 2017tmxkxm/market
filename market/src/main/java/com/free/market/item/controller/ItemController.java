@@ -53,30 +53,13 @@ public class ItemController {
 
     @GetMapping
     public String items(@ModelAttribute(name = "params") SearchDto params, Model model
-                        // SpEL
                         , @AuthenticationPrincipal PrincipalDetails principalDetails) {
         PagingResponse<Item> response = itemService.findAll(params);
         model.addAttribute("response", response);
 
-        /*System.out.println("ItemController.items");
-        log.info("memberResponse={}", memberResponse);
-        if(memberResponse != null) {
-            model.addAttribute("userInfo", memberResponse.getLoginId());
-        }*/
-
-        // MemberResponse memberResponse= (MemberResponse) authentication.getPrincipal(); -> X
-        // SecurityContextHolder에서 직접 가져오는 방법
-        // authentication에서 가져온 principal은 principalDetals다.
-        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //PrincipalDetails principalDetails= (PrincipalDetails) authentication.getPrincipal();
-        //log.info("memberResponse={}", principalDetails.getUsername());
-
         if(principalDetails != null) {
-            log.info("PrincipalDetails={}", principalDetails.getUsername());
             model.addAttribute("memberInfo", principalDetails.getUsername());
         }
-
-
         return "item/items";
     }
 
