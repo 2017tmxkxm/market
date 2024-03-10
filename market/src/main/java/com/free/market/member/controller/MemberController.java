@@ -6,6 +6,7 @@ import com.free.market.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -18,7 +19,12 @@ public class MemberController {
 
     // 로그인 페이지
     @GetMapping("/login")
-    public String loginForm() {
+    public String loginForm(@RequestParam(name = "error", required = false) String error
+                            , @RequestParam(name = "exception", required = false) String exception
+                            , Model model) {
+
+        model.addAttribute("error", error);
+        model.addAttribute("exception", exception);
         return "member/login";
     }
 
@@ -31,7 +37,6 @@ public class MemberController {
     @PostMapping
     @ResponseBody
     public Long join(@RequestBody MemberRequest params) {
-        log.info("params={}", params.toString());
         return memberService.saveMember(params);
     }
 
