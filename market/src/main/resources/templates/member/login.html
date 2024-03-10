@@ -31,6 +31,9 @@
                             <label class="form-label text-white">Password</label>
                             <input type="password" class="form-control" name="password">
                         </div>
+                        <div th:if="${param.error}">
+                            <div class="field-error">[[${exception}]]</div>
+                        </div>
                         <button type="submit" class="btn btn-primary mt-3 mr-3">로그인</button>
                         <button type="button" class="btn btn-secondary mt-3" th:onclick="|location.href='@{/member/add}'|">회원가입</button>
                     </form>
