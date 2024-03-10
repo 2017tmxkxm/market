@@ -15,7 +15,6 @@ public class PrincipalDetails implements UserDetails {
 
     // 일반 로그인
     public PrincipalDetails(MemberResponse memberResponse) {
-        System.out.println("PrincipalDetails.PrincipalDetails");
         this.memberResponse = memberResponse;
     }
 
