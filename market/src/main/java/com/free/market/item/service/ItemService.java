@@ -1,5 +1,6 @@
 package com.free.market.item.service;
 
+import com.free.market.auth.PrincipalDetails;
 import com.free.market.common.dto.SearchDto;
 import com.free.market.common.paging.Pagination;
 import com.free.market.common.paging.PagingResponse;
@@ -7,8 +8,11 @@ import com.free.market.item.domain.Item;
 import com.free.market.item.domain.ItemSaveForm;
 import com.free.market.item.domain.ItemUpdateForm;
 import com.free.market.item.mapper.ItemMapper;
+import com.free.market.member.domain.MemberResponse;
+import com.free.market.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,6 +24,7 @@ import java.util.List;
 public class ItemService {
 
     private final ItemMapper itemMapper;
+    private final MemberMapper memberMapper;
 
     /**
      * 상품 목록
@@ -46,11 +51,13 @@ public class ItemService {
      * @param form
      * @return itemId
      */
-    public Long save(ItemSaveForm form) {
+    public Long save(ItemSaveForm form, Long id) {
         Item item = form.toItem();
-        item.setUserId(1L);
-        item.setCreateUser(1L);
+
+        item.setMemberId(id);
+        item.setCreateUser(id);
         itemMapper.save(item);
+
         return item.getId();
     }
 
@@ -76,8 +83,9 @@ public class ItemService {
      * @param form
      * @return itemId
      */
-    public Long update(ItemUpdateForm form) {
+    public Long update(ItemUpdateForm form, Long id) {
         Item updateItem = form.toItem();
+        updateItem.setUpdateUser(id);
         itemMapper.update(updateItem);
         return updateItem.getId();
     }
