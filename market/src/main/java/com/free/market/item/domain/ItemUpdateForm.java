@@ -36,7 +36,7 @@ public class ItemUpdateForm {
     @NotBlank(message = "판매여부를 체크해주세요.")
     private String open;
 
-    private Long userId;
+    private Long memberId;
 
     private Long createUser;
 
@@ -51,6 +51,6 @@ public class ItemUpdateForm {
     private List<Long> removeFileIds;  // 삭제할 첨부파일 id List
 
     public Item toItem() {
-        return new Item(id, itemName, content, price, quantity, open, userId, updateDate, updateUser);
+        return new Item(id, itemName, content, price, quantity, open, updateDate, updateUser);
     }
 }
