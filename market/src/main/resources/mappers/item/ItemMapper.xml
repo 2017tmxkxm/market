@@ -13,13 +13,14 @@
             , a.price
             , a.quantity
             , a.open
-            , a.user_id
-            , a.create_user
             , b.id AS file_id
+            , c.login_id
         FROM
             tb_item a
         LEFT JOIN(SELECT id, item_id FROM tb_file WHERE delete_yn = 0)	b
         ON a.id = b.item_id
+        INNER JOIN (SELECT * FROM tb_member) c
+        ON a.member_id = c.id
         <where>
             <if test="itemName != null and itemName != ''">
                 and itemName like concat('%', #{itemName}, '%')
@@ -60,7 +61,7 @@
             , price
             , quantity
             , open
-            , user_id
+            , member_id
             , create_user
         ) VALUE (
             #{itemName}
@@ -68,7 +69,7 @@
             , #{price}
             , #{quantity}
             , #{open}
-            , #{userId}
+            , #{memberId}
             , #{createUser}
         )
 
@@ -89,9 +90,11 @@
             , a.open
             , a.create_user
             , a.update_user
-            , a.user_id
+            , b.login_id
         FROM
             tb_item a
+        INNER JOIN (SELECT id, login_id FROM tb_member) b
+        ON a.member_id = b.id
         WHERE 1=1
             AND a.id = #{id}
     </select>
