@@ -35,8 +35,6 @@ public class ItemSaveForm {
 
     private Long createUser;
 
-    private Long updateUser;
-
     private List<MultipartFile> files;
 
     public Item toItem() {
