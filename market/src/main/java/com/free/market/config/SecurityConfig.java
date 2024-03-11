@@ -31,7 +31,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/img/**", "/item/{itemId}/files/{fileId}/download", "/item", "/member/login", "/member/add", "/member", "/member/count", "/js/**").permitAll()
+                        .requestMatchers("/img/**", "/item/{itemId}/files/{fileId}/download", "/item", "/member/login", "/member/add", "/member"
+                                        , "/member/count", "/js/**", "/item/{itemId}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
