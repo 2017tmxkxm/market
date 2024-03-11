@@ -67,12 +67,12 @@
 
     <div class="row">
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg"
+            <button th:if="${loginId.equals(item.loginId)}" class="w-100 btn btn-primary btn-lg"
                     th:onclick="goUpdatePage([[${itemId}]])"
                     type="button">상품 수정</button>
         </div>
         <div class="col">
-            <button class="w-100 btn btn-primary btn-lg"
+            <button th:if="${loginId.equals(item.loginId)}" class="w-100 btn btn-primary btn-lg"
                     th:onclick="itemDel([[${itemId}]]);"
                     type="button">상품 삭제</button>
         </div>
