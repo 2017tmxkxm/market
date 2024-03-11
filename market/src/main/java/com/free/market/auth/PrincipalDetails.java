@@ -2,6 +2,7 @@ package com.free.market.auth;
 
 import com.free.market.member.domain.MemberRequest;
 import com.free.market.member.domain.MemberResponse;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 // 사용자의 정보를 담는 인터페이스
 public class PrincipalDetails implements UserDetails {
     private final MemberResponse memberResponse;
