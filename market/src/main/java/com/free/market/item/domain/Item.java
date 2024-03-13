@@ -18,6 +18,7 @@ public class Item {
     private Integer quantity;
     private String open;
     private Long memberId;
+    private String loginId;
     private String createDate;
     private Long createUser;
     private String updateDate;
