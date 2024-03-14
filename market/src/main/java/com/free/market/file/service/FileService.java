@@ -44,6 +44,7 @@ public class FileService {
         return fileMapper.findAllByIds(ids);
     }
 
+    @Transactional
     public void deleteAllFileByIds(List<Long> ids) {
         if(CollectionUtils.isEmpty(ids)) {
             return;
