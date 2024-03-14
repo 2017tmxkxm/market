@@ -2,8 +2,13 @@ package com.free.market.item.service;
 
 import com.free.market.auth.PrincipalDetails;
 import com.free.market.common.dto.SearchDto;
+import com.free.market.common.file.FileUtils;
 import com.free.market.common.paging.Pagination;
 import com.free.market.common.paging.PagingResponse;
+import com.free.market.file.domain.FileRequest;
+import com.free.market.file.domain.FileResponse;
+import com.free.market.file.mapper.FileMapper;
+import com.free.market.file.service.FileService;
 import com.free.market.item.domain.Item;
 import com.free.market.item.domain.ItemSaveForm;
 import com.free.market.item.domain.ItemUpdateForm;
@@ -14,7 +19,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +32,7 @@ import java.util.List;
 public class ItemService {
 
     private final ItemMapper itemMapper;
-    private final MemberMapper memberMapper;
+    private final FileMapper fileMapper;
 
     /**
      * 상품 목록
@@ -51,14 +59,32 @@ public class ItemService {
      * @param form
      * @return itemId
      */
-    public Long save(ItemSaveForm form, Long id) {
+    public Long save(ItemSaveForm form, Long memberId) {
         Item item = form.toItem();
-
-        item.setMemberId(id);
-        item.setCreateUser(id);
+        item.setMemberId(memberId);
+        item.setCreateUser(memberId);
         itemMapper.save(item);
-
         return item.getId();
+    }
+
+    /**
+     * 상품 등록
+     * @param form
+     * @param fileUtils
+     * @param memberId - 현재 사용자 id
+     * @return itemId
+     * @throws IOException
+     */
+    @Transactional
+    public Long save(ItemSaveForm form, FileUtils fileUtils, Long memberId) throws IOException {
+        // item save 로직 호출
+        Long itemId = save(form, memberId);
+
+        // 첨부파일 업로드 로직 실행
+        List<FileRequest> files = fileUtils.uploadFiles(form.getFiles());
+        saveFile(itemId, files);
+
+        return itemId;
     }
 
     /**
@@ -89,4 +115,77 @@ public class ItemService {
         itemMapper.update(updateItem);
         return updateItem.getId();
     }
+
+    /**
+     * 상품 수정
+     * @param form
+     * @param fileUtils
+     * @param id
+     * @return updateItemId - 게시글 PK
+     * @throws IOException
+     */
+    @Transactional
+    public Long update(ItemUpdateForm form, FileUtils fileUtils, Long id) throws IOException {
+        // 상품 수정 메서드 호출
+        Long updateItemId = update(form, id);
+
+        // 파일 업로드 (to disk)
+        List<FileRequest> uploadFiles = fileUtils.uploadFiles(form.getFiles());
+        
+        // 파일 정보 저장 (to database)
+        saveFile(form.getId(), uploadFiles);
+        
+        // 삭제할 파일 정보 조회 (from database)
+        List<FileResponse> deleteFiles = findAllFileByIds(form.getRemoveFileIds());
+
+        // 파일 삭제 (from disk)
+        fileUtils.deleteFiles(deleteFiles);
+
+        // 파일 삭제 (from database)
+        deleteAllFileByIds(form.getRemoveFileIds());
+
+        return updateItemId;
+    }
+
+    /**
+     * 파일 저장
+     * @param itemId - 게시글 PK
+     * @param files
+     */
+    private void saveFile(Long itemId, List<FileRequest> files) {
+        if(CollectionUtils.isEmpty(files)) {
+            return;
+        }
+
+        for (FileRequest file : files) {
+            file.setItemId(itemId);
+        }
+
+        fileMapper.saveAll(files);
+    }
+
+    /**
+     * 파일 리스트 조회
+     * @param ids - PK 리스트
+     * @return 파일 리스트
+     */
+    private List<FileResponse> findAllFileByIds(List<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+
+        return fileMapper.findAllByIds(ids);
+    }
+
+    /**
+     * 파일 삭제 (from DataBase)
+     * @param ids - PK 리스트
+     */
+    private void deleteAllFileByIds(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+        fileMapper.deleteAllByIds(ids);
+    }
+
 }
