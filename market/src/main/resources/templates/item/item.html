@@ -90,7 +90,6 @@
 
 <script th:inline="javascript">
     let fileId = [];
-    console.log(fileId)
 
     function itemDel(itemId) {
         const confirmYn = confirm("삭제 하시겠습니까?");
@@ -142,7 +141,6 @@
                 document.getElementById('files').innerHTML = fileHtml;
             }
         });
-
     }
 
     // 게시글 수정 페이지로 이동
