@@ -13,6 +13,7 @@
             , a.price
             , a.quantity
             , a.open
+            , a.delete_yn
             , b.id AS file_id
             , c.login_id
         FROM
@@ -21,14 +22,14 @@
         ON a.id = b.item_id
         INNER JOIN (SELECT * FROM tb_member) c
         ON a.member_id = c.id
-        <where>
+        WHERE
+            a.delete_yn = 0
             <if test="itemName != null and itemName != ''">
                 and itemName like concat('%', #{itemName}, '%')
             </if>
             <if test="price != null and price != ''">
                 and price &lt;= #{price}
             </if>
-        </where>
         GROUP BY
             a.id
         ORDER BY
@@ -44,14 +45,14 @@
             COUNT(*)
         FROM
             tb_item
-        <where>
+        WHERE
+            delete_yn = 0
             <if test="itemName != null and itemName !=''">
                 and itemName like concat('%', #{itemName}, '%')
             </if>
             <if test="price != null and price != ''">
                 and price &lt;= #{price}
             </if>
-        </where>
     </select>
 
     <insert id="save">
@@ -63,6 +64,7 @@
             , open
             , member_id
             , create_user
+            , delete_yn
         ) VALUE (
             #{itemName}
             , #{content}
@@ -71,6 +73,7 @@
             , #{open}
             , #{memberId}
             , #{createUser}
+            , 0
         )
 
         <selectKey resultType="Long" keyProperty="id" keyColumn="id" order="AFTER">
@@ -96,13 +99,15 @@
         INNER JOIN (SELECT id, login_id FROM tb_member) b
         ON a.member_id = b.id
         WHERE 1=1
+            AND a.delete_yn = 0
             AND a.id = #{id}
     </select>
 
     <delete id="delete">
-        DELETE FROM tb_item
-            WHERE 1=1
-        AND id = #{id}
+        UPDATE tb_item SET
+        delete_yn = 1
+        WHERE 1=1
+            AND id = #{id}
     </delete>
 
     <update id="update">
