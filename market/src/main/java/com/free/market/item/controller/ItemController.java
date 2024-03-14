@@ -63,11 +63,13 @@ public class ItemController {
         return "item/items";
     }
 
-    @GetMapping("/add")
-    public String addForm(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    @GetMapping("/add/form")
+    public String addForm(Model model, @AuthenticationPrincipal MemberResponse memberResponse) {
         model.addAttribute("item", new Item());
 
-        model.addAttribute("memberInfo", principalDetails.getUsername());
+        if(memberResponse != null){
+            model.addAttribute("memberInfo", memberResponse.getLoginId());
+        }
 
         return "item/addForm";
     }
@@ -81,10 +83,7 @@ public class ItemController {
             return "item/addForm";
         }
 
-        Long itemId = itemService.save(form, principalDetails.getMemberResponse().getId());
-
-        List<FileRequest> files = fileUtils.uploadFiles(form.getFiles());
-        fileService.saveFile(itemId, files);
+        Long itemId = itemService.save(form, fileUtils, principalDetails.getMemberResponse().getId());
 
         redirectAttributes.addAttribute("itemId", itemId);
 
@@ -109,10 +108,7 @@ public class ItemController {
 
     @ResponseBody
     @GetMapping("/{itemId}/delete")
-    @Transactional
     public Map<String, Object> delete(@PathVariable(name = "itemId") Long itemId, @ModelAttribute(name = "params") SearchDto params) {
-
-        log.info("fileId={}", params.getFileId());
 
         Map<String, Object> paramsMap = new HashMap<>();
         paramsMap.put("page", params.getPage());
@@ -142,7 +138,6 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/edit")
-    @Transactional
     public String edit(@PathVariable(name = "itemId") String itemId, @Validated @ModelAttribute("item") ItemUpdateForm form
                         , HttpServletRequest request
                         , BindingResult bindingResult
@@ -157,22 +152,7 @@ public class ItemController {
             return "item/editForm";
         }
 
-        Long updateItemId = itemService.update(form, principalDetails.getMemberResponse().getId());
-
-        // 파일 업로드 (to disk)
-        List<FileRequest> uploadFiles = fileUtils.uploadFiles(form.getFiles());
-
-        // 파일 정보 저장 (to database)
-        fileService.saveFile(form.getId(), uploadFiles);
-
-        // 삭제할 파일 정보 조회 (from database)
-        List<FileResponse> deleteFiles = fileService.findAllFileByIds(form.getRemoveFileIds());
-
-        // 파일 삭제 (from disk)
-        fileUtils.deleteFiles(deleteFiles);
-
-        // 파일 삭제 (from database)
-        fileService.deleteAllFileByIds(form.getRemoveFileIds());
+        Long updateItemId = itemService.update(form, fileUtils, principalDetails.getMemberResponse().getId());
 
         return "redirect:/item/" + updateItemId + "?" + params;
     }
