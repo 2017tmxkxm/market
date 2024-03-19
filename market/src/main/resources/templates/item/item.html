@@ -72,7 +72,7 @@
                     type="button">상품 수정</button>
         </div>
         <div class="col">
-            <button th:if="${loginId.equals(item.loginId)}" class="w-100 btn btn-primary btn-lg"
+            <button th:if="${loginId.equals(item.loginId)}" class="w-100 btn btn-danger btn-lg"
                     th:onclick="itemDel([[${itemId}]]);"
                     type="button">상품 삭제</button>
         </div>
@@ -83,11 +83,27 @@
         </div>
     </div>
 
+    <!--/* 댓글 렌더링 영역 */-->
+    <div class="cm_list">
+
+    </div>
+
+    <!--/* 댓글 작성 */-->
+    <div>
+        <fieldset>
+            <legend>댓글 입력</legend>
+            <div>
+                <textarea id="comment" name="comment" class="form-control" onkeyup="countingLength(this);" cols="90" rows="4"></textarea>
+                <button type="button" class="w-100 btn btn-primary btn-sm" onclick="saveComment();">등 록</button> <i id="counter">0/300자</i>
+            </div>
+        </fieldset>
+    </div>
+
 </div> <!-- /container -->
 </body>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-
+<script th:src="@{/js/function.js}"></script>
 <script th:inline="javascript">
     let fileId = [];
 
@@ -116,6 +132,7 @@
 
     window.onload = () => {
         findAllFile();
+        findAllComment();
     }
 
 
@@ -157,6 +174,102 @@
         //console.log('item.html location.search : ' + location.search);
         location.href = '/item' + '?'+ queryString.toString();
     }
+
+    // 댓글 길이 카운팅
+    function countingLength(comment) {
+        if(comment.value.length > 300) {
+            alert('댓글을 300자 이하로 입력해 주세요');
+            alert(comment);
+            comment.value = comment.value.substring(0,300);
+            comment.focus();
+        }
+
+        document.getElementById('counter').innerText = comment.value.length + '/300자';
+    }
+
+    // 댓글 저장
+    function saveComment() {
+
+        const memberId = [[${memberId}]];
+        if(memberId == null) {
+            alert('로그인 후 이용해 주세요.');
+            return;
+        } else {
+            const comment = document.getElementById('comment');
+            isValid(comment, '댓글');
+
+            const itemId = [[${item.id}]];
+            const params = {
+                itemId : itemId,
+                content : comment.value,
+                writer: memberId
+            }
+
+            $.ajax({
+                url: `/item/${itemId}/comments`,
+                type: 'post',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify(params),
+                async: false,
+                success: function(response) {
+                    alert('저장되었습니다');
+                    comment.value = '';
+                    document.getElementById('counter').innerText = '0/300자';
+                    findAllComment();
+                },
+                error: function(request, status, error) {
+                    console.log(error);
+                }
+            })
+        }
+    }
+
+    // 전체 댓글 조회
+    function findAllComment() {
+        const itemId = [[${item.id}]]
+
+        $.ajax({
+            url: `/item/${itemId}/comments`,
+            type: 'get',
+            dataType: 'json',
+            async: false,
+            success: function(response) {
+                // 1. 조회된 데이터가 없는 경우
+                if(!response.length) {
+                    document.querySelector('.cm_list').innerHTML = '<div>등록된 댓글이 없습니다.</div>';
+                    return false;
+                }
+
+                // 2. 렌더링 할 HTML을 저장할 변수
+                let commentHtml = '';
+
+                // 3. 댓글 HTML 추가
+                response.forEach(row => {
+                    commentHtml += `
+                        <div>
+                            <p class="writer">
+                                <em>${row.writer}</em>
+                                <span>                                                                                                                                                                                            ${row.createdDate}</span>
+                            </p>
+                            <div>${row.content}</div>
+                            <div class="row">
+                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm">수정</button></div>
+                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm">삭제</button></div>
+                            </div>
+                        </div>
+                    `;
+                })
+
+                // 4. class가 cm_list인 요소를 찾아 HTML을 렌더링
+                document.querySelector('.cm_list').innerHTML = commentHtml;
+            },
+            error: function(request, status, error) {
+                console.log(error);
+            }
+        })
+    }
+
 </script>
 
 </html>
