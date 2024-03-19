@@ -5,6 +5,7 @@ import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.method.P;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -37,6 +38,7 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/img/**", "/item/{itemId}/files/{fileId}/download", "/item", "/member/login", "/member/add", "/member"
                                         , "/member/count", "/js/**", "/item/{itemId}", "/error", "/item/{itemId}/files").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/item/{itemId}/comments").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
