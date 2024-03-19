@@ -99,6 +99,7 @@ public class ItemController {
         if(principalDetails != null) {
             model.addAttribute("loginId", principalDetails.getUsername());
             model.addAttribute("memberInfo", principalDetails.getUsername());
+            model.addAttribute("memberId", principalDetails.getMemberResponse().getId());
         } else {
             model.addAttribute("loginId", "anonymousUser");
         }
