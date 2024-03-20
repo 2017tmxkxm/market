@@ -99,10 +99,30 @@
         </fieldset>
     </div>
 
+    <!--/* 댓글 수정 popup */-->
+    <div class="modal" tabindex="-1" id="commentUpdate">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="modalContent" name="modalContent" cols="90" rows="4" placeholder="수정할 내용을 입력해 주세요."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="commentUpdateBtn">수정</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div> <!-- /container -->
 </body>
 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 <script th:src="@{/js/function.js}"></script>
 <script th:inline="javascript">
     let fileId = [];
@@ -228,6 +248,7 @@
     // 전체 댓글 조회
     function findAllComment() {
         const itemId = [[${item.id}]]
+        const memberId = [[${memberId}]];
 
         $.ajax({
             url: `/item/${itemId}/comments`,
@@ -246,19 +267,33 @@
 
                 // 3. 댓글 HTML 추가
                 response.forEach(row => {
-                    commentHtml += `
-                        <div>
-                            <p class="writer">
-                                <em>${row.writer}</em>
-                                <span>                                                                                                                                                                                            ${row.createdDate}</span>
-                            </p>
-                            <div>${row.content}</div>
-                            <div class="row">
-                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm">수정</button></div>
-                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm">삭제</button></div>
+                    // 로그인 유무에 따라 삭제, 수정 버튼 없앰
+                    if(memberId == row.writer) {
+                        commentHtml += `
+                            <div>
+                                <p class="writer">
+                                    <em>${row.writer}</em>
+                                    <span>                                                                                                                                                                                            ${row.createdDate}</span>
+                                </p>
+                                <div>${row.content}</div>
+                                <div class="row">
+                                    <div class="col"><button type="button" class="w-100 btn btn-light btn-sm" onclick="openCommentUpdatePopup(${row.id});">수정</button></div>
+                                    <div class="col"><button type="button" class="w-100 btn btn-light btn-sm">삭제</button></div>
+                                </div>
                             </div>
-                        </div>
                     `;
+                    } else {
+                        commentHtml += `
+                            <div>
+                                <p class="writer">
+                                    <em>${row.writer}</em>
+                                    <span>                                                                                                                                                                                            ${row.createdDate}</span>
+                                </p>
+                                <div>${row.content}</div>
+                            </div>
+                        `;
+                    }
+
                 })
 
                 // 4. class가 cm_list인 요소를 찾아 HTML을 렌더링
@@ -270,6 +305,26 @@
         })
     }
 
+    // 댓글 수정 팝업 open
+    function openCommentUpdatePopup(id) {
+        const itemId = [[${item.id}]];
+        const memberId = [[${memberId}]];
+
+        $.ajax({
+            url: `/item/${itemId}/comments/${id}`,
+            type: 'get',
+            dataType: 'json',
+            async: false,
+            success: function(response) {
+                document.getElementById('modalContent').value = response.content;
+                document.getElementById('commentUpdateBtn').setAttribute('onclick', `updateComment(${id})`);
+                $('#commentUpdate').modal('show');
+            },
+            error:function (request, status, error) {
+                console.log(error)
+            }
+        })
+    }
 </script>
 
 </html>
