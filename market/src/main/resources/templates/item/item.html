@@ -308,7 +308,6 @@
     // 댓글 수정 팝업 open
     function openCommentUpdatePopup(id) {
         const itemId = [[${item.id}]];
-        const memberId = [[${memberId}]];
 
         $.ajax({
             url: `/item/${itemId}/comments/${id}`,
@@ -322,6 +321,38 @@
             },
             error:function (request, status, error) {
                 console.log(error)
+            }
+        })
+    }
+
+    // 댓글 수정
+    function updateComment(id) {
+        const memberId = [[${memberId}]];
+        const content = document.getElementById('modalContent');
+        isValid(content, '수정할 내용');
+
+        const itemId = [[${item.id}]];
+        const params = {
+            id: id,
+            itemId: itemId,
+            content: content.value,
+            writer: memberId
+        }
+
+        $.ajax({
+            url: `/item/${itemId}/comments/${id}`,
+            type: 'patch',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(params),
+            async: false,
+            success: function(response) {
+                alert('수정되었습니다.');
+                $('#commentUpdate').modal('hide');
+                findAllComment();
+            },
+            error: function(request, status, error) {
+                console.log(error);
             }
         })
     }
