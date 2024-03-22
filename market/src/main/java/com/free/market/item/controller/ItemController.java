@@ -52,24 +52,16 @@ public class ItemController {
     }
 
     @GetMapping
-    public String items(@ModelAttribute(name = "params") SearchDto params, Model model
-                        , @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public String items(@ModelAttribute(name = "params") SearchDto params, Model model) {
         PagingResponse<Item> response = itemService.findAll(params);
         model.addAttribute("response", response);
 
-        if(principalDetails != null) {
-            model.addAttribute("memberInfo", principalDetails.getUsername());
-        }
         return "item/items";
     }
 
     @GetMapping("/add/form")
-    public String addForm(Model model, @AuthenticationPrincipal MemberResponse memberResponse) {
+    public String addForm(Model model) {
         model.addAttribute("item", new Item());
-
-        if(memberResponse != null){
-            model.addAttribute("memberInfo", memberResponse.getLoginId());
-        }
 
         return "item/addForm";
     }
@@ -97,11 +89,7 @@ public class ItemController {
         model.addAttribute("item", item);
 
         if(principalDetails != null) {
-            model.addAttribute("loginId", principalDetails.getUsername());
-            model.addAttribute("memberInfo", principalDetails.getUsername());
             model.addAttribute("memberId", principalDetails.getMemberResponse().getId());
-        } else {
-            model.addAttribute("loginId", "anonymousUser");
         }
 
         return "/item/item";
@@ -134,7 +122,6 @@ public class ItemController {
     public String editForm(@PathVariable(name = "itemId") Long itemId, Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Item item = itemService.findById(itemId);
         model.addAttribute("item", item);
-        model.addAttribute("memberInfo", principalDetails.getUsername());
         return "item/editForm";
     }
 
