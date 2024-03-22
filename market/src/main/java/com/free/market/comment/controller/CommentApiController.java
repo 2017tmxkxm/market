@@ -19,7 +19,7 @@ public class CommentApiController {
     @PostMapping("/item/{itemId}/comments")
     public CommentResponse saveComment(@PathVariable(name = "itemId") Long itemId, @RequestBody CommentRequest params) {
         Long id = commentService.save(params);
-        return commentService.findById(itemId);
+        return commentService.findById(id);
     }
 
     // 댓글 리스트 조회
