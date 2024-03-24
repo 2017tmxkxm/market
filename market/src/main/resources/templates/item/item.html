@@ -285,7 +285,7 @@
                         commentHtml += `
                             <div class="row">
                                 <div class="col"><button type="button" class="w-100 btn btn-light btn-sm" onclick="openCommentUpdatePopup(${row.id});">수정</button></div>
-                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm">삭제</button></div>
+                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm" onclick="deleteComment(${row.id})">삭제</button></div>
                             </div>
                         `;
                     }
@@ -349,6 +349,31 @@
             },
             error: function(request, status, error) {
                 console.log(error);
+            }
+        })
+    }
+
+    // 댓글 삭제
+    function deleteComment(id) {
+        // 취소 누를 시 true
+        // 확인 누를 시 false
+        if(!confirm('선택한 댓글을 삭제할까요?')) {
+            return false;
+        }
+
+        const itemId = [[${item.id}]];
+
+        $.ajax({
+            url: `/item/${itemId}/comments/${id}`,
+            type: 'delete',
+            dataType: 'json',
+            async: false,
+            success: function (response) {
+                alert('삭제되었습니다.');
+                findAllComment();
+            },
+            error: function (request, status, error) {
+                console.log(error)
             }
         })
     }

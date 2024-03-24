@@ -40,4 +40,10 @@ public class CommentApiController {
         commentService.update(params);
         return commentService.findById(id);
     }
+
+    // 댓글 삭제
+    @DeleteMapping("/item/{itemId}/comments/{id}")
+    public Long deleteComment(@PathVariable(name = "itemId") Long itemId, @PathVariable(name = "id") Long id) {
+        return commentService.delete(id);
+    }
 }
