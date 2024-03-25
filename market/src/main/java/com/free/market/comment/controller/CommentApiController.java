@@ -2,7 +2,10 @@ package com.free.market.comment.controller;
 
 import com.free.market.comment.domain.CommentRequest;
 import com.free.market.comment.domain.CommentResponse;
+import com.free.market.comment.domain.CommentSearchDto;
 import com.free.market.comment.service.CommentService;
+import com.free.market.common.paging.Pagination;
+import com.free.market.common.paging.PagingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +27,8 @@ public class CommentApiController {
 
     // 댓글 리스트 조회
     @GetMapping("/item/{itemId}/comments")
-    public List<CommentResponse> findAllComment(@PathVariable(name = "itemId") Long itemId) {
-        return commentService.findAll(itemId);
+    public PagingResponse<CommentResponse> findAllComment(@PathVariable(name = "itemId") Long itemId, CommentSearchDto params) {
+        return commentService.findAll(params);
     }
 
     // 댓글 상세정보 조회
