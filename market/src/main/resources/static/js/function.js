@@ -38,7 +38,7 @@ function getJson(uri, params) {
     return json;
 }
 
-// 데이터 저장
+// 데이터 저장/수정/삭제
 function callApi(uri, method, params) {
 
     let json = {}
