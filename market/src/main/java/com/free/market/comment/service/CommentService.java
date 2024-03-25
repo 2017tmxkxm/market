@@ -2,11 +2,16 @@ package com.free.market.comment.service;
 
 import com.free.market.comment.domain.CommentRequest;
 import com.free.market.comment.domain.CommentResponse;
+import com.free.market.comment.domain.CommentSearchDto;
 import com.free.market.comment.mapper.CommentMapper;
+import com.free.market.common.paging.Pagination;
+import com.free.market.common.paging.PagingResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -61,8 +66,25 @@ public class CommentService {
      * 댓글 리스트 조회
      * @param itemId - 게시글 번호 (PK)
      * @return 특정 게시글에 등록된 댓글 리스트
-     */
+
     public List<CommentResponse> findAll(Long itemId) {
         return commentMapper.findAll(itemId);
+    }
+     */
+
+    /**
+     * 댓글 리스트 조회
+     * @param params - search
+     * @return list & pagination information
+     */
+    public PagingResponse<CommentResponse> findAll(CommentSearchDto params) {
+        int count = commentMapper.count(params);
+        if (count < 1) {
+            return new PagingResponse<>(Collections.emptyList(), null);
+        }
+
+        Pagination pagination = new Pagination(count, params);
+        List<CommentResponse> list = commentMapper.findAll(params);
+        return new PagingResponse<>(list, pagination);
     }
 }

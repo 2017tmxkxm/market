@@ -63,7 +63,7 @@
     </delete>
 
     <!-- 댓글 리스트 조회 -->
-    <select id="findAll" resultType="CommentResponse">
+    <select id="findAll" resultType="CommentResponse" parameterType="CommentSearchDto">
         /* findAll */
         SELECT
             <include refid="commentColumns" />
@@ -71,8 +71,20 @@
             tb_comment
         WHERE
             delete_yn = 0
-            AND item_id = #{id}
+            AND item_id = #{itemId}
         ORDER BY
             id DESC
+        LIMIT #{pagination.limitStart}, #{recordSize}
+    </select>
+
+    <!-- 댓글 수 카운팅 -->
+    <select id="count" parameterType="CommentSearchDto">
+        SELECT
+            COUNT(*)
+        FROM
+            tb_comment
+        WHERE
+            delete_yn = 0
+            AND item_id = #{itemId}
     </select>
 </mapper>
