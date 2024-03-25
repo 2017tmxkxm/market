@@ -103,6 +103,11 @@
         </fieldset>
     </div>
 
+    <!--/* 페이지네이션 렌더링 영역 */-->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center" style="display: flex; " id="paging"></ul>
+    </nav>
+
     <!--/* 댓글 수정 popup */-->
     <div class="modal" tabindex="-1" id="commentUpdate">
         <div class="modal-dialog">
@@ -192,10 +197,6 @@
     // 목록으로 버튼시 클릭시 리스트 페이지로 이동
     function goListPage() {
         const queryString = new URLSearchParams(location.search);
-        // page=1&recordSize=8&pageSize=10&itemName=3&price=2000
-        //console.log('item.html queryString : ' + queryString);
-        // ?page=1&recordSize=8&pageSize=10&itemName=3&price=2000
-        //console.log('item.html location.search : ' + location.search);
         location.href = '/item' + '?'+ queryString.toString();
     }
 
@@ -222,112 +223,59 @@
             isValid(comment, '댓글');
 
             const itemId = [[${item.id}]];
+            const uri = `/item/${itemId}/comments`;
             const params = {
                 itemId : itemId,
                 content : comment.value,
                 writer: memberId
             }
 
-            $.ajax({
-                url: `/item/${itemId}/comments`,
-                type: 'post',
-                contentType: 'application/json; charset=utf-8',
-                dataType: 'json',
-                data: JSON.stringify(params),
-                async: false,
-                success: function(response) {
-                    alert('저장되었습니다');
-                    comment.value = '';
-                    document.getElementById('counter').innerText = '0/300자';
-                    findAllComment();
-                },
-                error: function(request, status, error) {
-                    console.log(error);
-                }
-            })
+            callApi(uri, 'post', params);
+            alert('저장되었습니다');
+            comment.value = '';
+            document.getElementById('counter').innerText = '0/300자';
+            findAllComment(1);
         }
     }
 
     // 전체 댓글 조회
-    function findAllComment() {
-        const itemId = [[${item.id}]]
-        const memberId = [[${memberId}]];
+    function findAllComment(page) {
+        const itemId = [[${item.id}]];
+        const uri = `/item/${itemId}/comments`;
+        const params = {
+            page: (page) ? page : 1,
+            recordSize: 1,
+            pageSize: 10,
+            itemId: itemId
+        }
 
-        $.ajax({
-            url: `/item/${itemId}/comments`,
-            type: 'get',
-            dataType: 'json',
-            async: false,
-            success: function(response) {
-                // 1. 조회된 데이터가 없는 경우
-                if(!response.length) {
-                    document.querySelector('.cm_list').innerHTML = '<div>등록된 댓글이 없습니다.</div>';
-                    return false;
-                }
-
-                // 2. 렌더링 할 HTML을 저장할 변수
-                let commentHtml = '';
-
-                // 3. 댓글 HTML 추가
-                response.forEach(row => {
-                    commentHtml += `
-                            <div>
-                                <p class="writer">
-                                    <em>${row.writer}</em>
-                                    <span>                                                                                                                                                                                            ${row.createdDate}</span>
-                                </p>
-                                <div>${row.content}</div>
-                            </div>
-                        `;
-
-                    // 로그인 유무에 따라 삭제, 수정 버튼 없앰
-                    if(memberId == row.writer) {
-                        commentHtml += `
-                            <div class="row">
-                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm" onclick="openCommentUpdatePopup(${row.id});">수정</button></div>
-                                <div class="col"><button type="button" class="w-100 btn btn-light btn-sm" onclick="deleteComment(${row.id})">삭제</button></div>
-                            </div>
-                        `;
-                    }
-
-                })
-
-                // 4. class가 cm_list인 요소를 찾아 HTML을 렌더링
-                document.querySelector('.cm_list').innerHTML = commentHtml;
-            },
-            error: function(request, status, error) {
-                console.log(error);
-            }
-        })
+        const response = getJson(uri, params);
+        const pagination = response.pagination;
+        drawComments(response.list);
+        drawPage(pagination, params.page);
     }
 
     // 댓글 수정 팝업 open
     function openCommentUpdatePopup(id) {
-        const itemId = [[${item.id}]];
 
-        $.ajax({
-            url: `/item/${itemId}/comments/${id}`,
-            type: 'get',
-            dataType: 'json',
-            async: false,
-            success: function(response) {
-                document.getElementById('modalContent').value = response.content;
-                document.getElementById('commentUpdateBtn').setAttribute('onclick', `updateComment(${id})`);
-                $('#commentUpdate').modal('show');
-            },
-            error:function (request, status, error) {
-                console.log(error)
-            }
-        })
+        const itemId = [[${item.id}]];
+        const uri = `/item/${itemId}/comments/${id}`;
+        const response = getJson(uri);
+        document.getElementById('modalContent').value = response.content;
+        document.getElementById('commentUpdateBtn').setAttribute('onclick', `updateComment(${id})`);
+        $('#commentUpdate').modal('show');
     }
 
     // 댓글 수정
     function updateComment(id) {
+        const page = document.querySelector('.active .page-link').innerText;
+
         const memberId = [[${memberId}]];
         const content = document.getElementById('modalContent');
         isValid(content, '수정할 내용');
 
         const itemId = [[${item.id}]];
+        const uri = `/item/${itemId}/comments/${id}`;
         const params = {
             id: id,
             itemId: itemId,
@@ -335,22 +283,11 @@
             writer: memberId
         }
 
-        $.ajax({
-            url: `/item/${itemId}/comments/${id}`,
-            type: 'patch',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            data: JSON.stringify(params),
-            async: false,
-            success: function(response) {
-                alert('수정되었습니다.');
-                $('#commentUpdate').modal('hide');
-                findAllComment();
-            },
-            error: function(request, status, error) {
-                console.log(error);
-            }
-        })
+        callApi(uri, 'patch', params);
+        alert('수정되었습니다.');
+        $('#commentUpdate').modal('hide');
+        findAllComment(page);
+
     }
 
     // 댓글 삭제
@@ -362,20 +299,87 @@
         }
 
         const itemId = [[${item.id}]];
+        const uri = `/item/${itemId}/comments/${id}`;
+        callApi(uri, 'delete');
+        alert('삭제되었습니다.');
+        findAllComment();
+    }
 
-        $.ajax({
-            url: `/item/${itemId}/comments/${id}`,
-            type: 'delete',
-            dataType: 'json',
-            async: false,
-            success: function (response) {
-                alert('삭제되었습니다.');
-                findAllComment();
-            },
-            error: function (request, status, error) {
-                console.log(error)
+    // 댓글 HTML draw
+    function drawComments(list) {
+        const memberId = [[${memberId}]];
+
+        if (!list.length) {
+            document.querySelector('.cm_list').innerHTML = '<div>등록된 댓글이 없습니다.</div>';
+            return false;
+        }
+
+        let commentHtml = '';
+
+        list.forEach(row => {
+            commentHtml += `
+                <div>
+                    <p class="writer">
+                        <em>${row.writer}</em>
+                        <span>${row.createdDate}</span>
+                    </p>
+                    <div>${row.content}</div>
+                </div>
+            `;
+
+            // 로그인 유무에 따라 삭제, 수정 버튼 없앰
+            if(memberId == row.writer) {
+                commentHtml += `
+                    <div class="row">
+                        <div class="col"><button type="button" class="w-100 btn btn-light btn-sm" onclick="openCommentUpdatePopup(${row.id});">수정</button></div>
+                        <div class="col"><button type="button" class="w-100 btn btn-light btn-sm" onclick="deleteComment(${row.id})">삭제</button></div>
+                    </div>
+                `;
             }
         })
+        document.querySelector('.cm_list').innerHTML = commentHtml;
+    }
+
+    // 페이지네이션 HTML draw
+    function drawPage(pagination, page) {
+
+        // 1. 필수 파라미터가 없는 경우, 페이지네이션 HTML을 제거한 후 로직 종료
+        if ( !pagination || !page ) {
+            document.querySelector('#paging').innerHTML = '';
+            throw new Error('Missing required parameters...');
+        }
+
+        // 2. 페이지네이션 HTML을 그릴 변수
+        let html = '';
+
+        // 3. 첫/이전 페이지 버튼 추가
+        if (pagination.existPrevPage) {
+            html += `
+                <li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="findAllComment(1)">Frist</a></li>
+                <li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="findAllComment(${pagination.startPage -1})">Previous</a></li>
+            `;
+        }
+
+        // 4. 페이지 번호 추가
+        html += '<p>';
+        for (let i = pagination.startPage; i <= pagination.endPage; i++) {
+            html += (i !== page)
+                ? `<li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="findAllComment(${i})">${i}</a></li>`
+                : `<li class="page-item active" aria-current="page"><span class="page-link">${i}</span></li>`
+        }
+        html += '</p>';
+
+        // 5. 다음/끝 페이지 버튼 추가
+        if (pagination.existNextPage) {
+            html += `
+                <li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="findAllComment(${pagination.endPage + 1});">Next</a></li>
+                <li class="page-item"><a class="page-link" href="javascript:void(0);" onclick="findAllComment(${pagination.totalPageCount})">Last</a></li>
+            `;
+        }
+
+        // 6. <div class="paging"></div> 태그에 변수 html에 담긴 내용을 렌더링
+        document.querySelector('#paging').innerHTML = html;
+
     }
 </script>
 
