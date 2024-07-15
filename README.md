@@ -12,37 +12,19 @@
 - Tool : IntelliJ, Git(SourceTree), HeidiSQL
 
 # 내용
-<details>
-  <summary>로그인</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/021f1dab-68d0-42d4-8229-c0619a7ed186" width="400" height="400"/>
-</details>
-<details>
-  <summary>메인</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/026d08dc-8aae-404b-9f10-d7008a0f8327"/>
-</details>
-<details>
-  <summary>상세(본인 게시글)</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/439a2623-2b90-437c-a868-b275e52a9100"/>
-</details>
-<details>
-  <summary>상세(본인 게시글 아닐 경우)</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/46a53f48-ffc3-4761-8229-bd498b0898ec"/>
-</details>
-<details>
-  <summary>상품 등록</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/714883c9-22e9-495d-84b1-d9ebaf87cdb9"/>
-</details>
-<details>
-  <summary>수정 (파일 삭제 전/후)</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/9eb6ae2e-45b6-4683-8a9e-f34fb0e96c55"/>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/e7a893d2-34f3-4018-9fab-28f585f1c820"/>
-</details>
-<details>
-  <summary>페이징</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/0ef477ae-8d3e-4a73-8509-64c5460a341f" />
-</details>
-<details>
-  <summary>회원가입</summary>
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/9c734a67-e7fd-457b-840b-9e8209cc6930" />
-  <img src="https://github.com/2017tmxkxm/market/assets/142385212/252c82f9-0a24-4ff3-9d09-50741fac9ee2"/>
-</details>
+## 📺 화면 구성
+| 로그인 | 메인 |
+| ------------ | ------------- |
+| ![로그인](https://github.com/user-attachments/assets/2e972c0c-9232-4048-a926-892db79377e9)| ![메인(로그인 전)](https://github.com/user-attachments/assets/d479310b-1f77-4bf9-82e8-885af349821a)|
+| 상세 | 등록 |
+| ![상세(자기게시글아닐시)](https://github.com/user-attachments/assets/a2d631de-f1f7-4907-b1a0-db8a6f523150)| ![상품 등록](https://github.com/user-attachments/assets/84d677c3-f4fe-4245-9c4e-851ccd0155e9)|
+| 검색 및 페이징 | 
+| ![페이징](https://github.com/user-attachments/assets/4e3343de-bf99-400d-a137-5d36b56cdae6)|
+<hr>
+
+## 주요 기능
+1️⃣ 로그인 및 게시글 등록 시 validation 체크 <br>
+2️⃣ 검색 및 페이징 기능 <br>
+3️⃣ 파일 업로드 기능 <br>
+* 파일 업로드 하지 않을 수 기본 이미지로 대체
+
